@@ -1,0 +1,34 @@
+"use client";
+
+import { useEffect } from "react";
+import Lenis from "lenis";
+
+/**
+ * LenisProvider — initializes smooth scrolling site-wide.
+ * Wraps children and sets up a global Lenis instance.
+ */
+export default function LenisProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  useEffect(() => {
+    const lenis = new Lenis({
+      duration: 1.2,
+      easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      touchMultiplier: 2,
+    });
+
+    function raf(time: number) {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    }
+    requestAnimationFrame(raf);
+
+    return () => {
+      lenis.destroy();
+    };
+  }, []);
+
+  return <>{children}</>;
+}
