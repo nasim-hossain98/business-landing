@@ -3,10 +3,6 @@
 import { useEffect } from "react";
 import Lenis from "lenis";
 
-/**
- * LenisProvider — initializes smooth scrolling site-wide.
- * Wraps children and sets up a global Lenis instance.
- */
 export default function LenisProvider({
   children,
 }: {
@@ -14,9 +10,13 @@ export default function LenisProvider({
 }) {
   useEffect(() => {
     const lenis = new Lenis({
-      duration: 1.2,
-      easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      duration: 1.8,
+      easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -12 * t)),
+      orientation: "vertical",
+      gestureOrientation: "vertical",
+      smoothWheel: true,
       touchMultiplier: 2,
+      wheelMultiplier: 1.2,
     });
 
     function raf(time: number) {

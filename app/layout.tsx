@@ -1,22 +1,20 @@
 import type { Metadata } from "next";
-import { Poppins, Inter } from "next/font/google";
+import { Cormorant_Garamond, Outfit } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import LenisProvider from "@/components/providers/LenisProvider";
+import { CartProvider } from "@/components/providers/CartContext";
 
-/* ----------------------------------------------------------------
-   Fonts — Poppins for headings, Inter for body text.
-   CSS variables are consumed by @theme in globals.css.
-   ---------------------------------------------------------------- */
-const poppins = Poppins({
-  variable: "--font-poppins",
+const cormorant = Cormorant_Garamond({
+  variable: "--font-cormorant",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
+  weight: ["400", "500", "600", "700"],
+  style: ["normal", "italic"],
   display: "swap",
 });
 
-const inter = Inter({
-  variable: "--font-inter",
+const outfit = Outfit({
+  variable: "--font-outfit",
   subsets: ["latin"],
   display: "swap",
 });
@@ -48,12 +46,14 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${poppins.variable} ${inter.variable} h-full antialiased`}
+      className={`${cormorant.variable} ${outfit.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col">
         <ThemeProvider>
-          <LenisProvider>{children}</LenisProvider>
+          <CartProvider>
+            <LenisProvider>{children}</LenisProvider>
+          </CartProvider>
         </ThemeProvider>
       </body>
     </html>

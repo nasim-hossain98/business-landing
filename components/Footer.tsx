@@ -25,10 +25,6 @@ const socials = [
   { icon: Share2, label: "Share", href: "#" },
 ];
 
-/**
- * Footer — newsletter signup with focus animation, social links,
- * quick links, help links, and copyright. Includes back-to-top button.
- */
 export default function Footer() {
   const [email, setEmail] = useState("");
   const [focused, setFocused] = useState(false);
@@ -47,34 +43,32 @@ export default function Footer() {
   return (
     <footer
       id="footer"
-      className="bg-zinc-900 dark:bg-zinc-950 text-white"
+      className="bg-stone-900 dark:bg-stone-950 text-white"
     >
-      {/* Newsletter section */}
-      <div className="border-b border-zinc-800">
-        <div className="mx-auto max-w-7xl px-6 py-16 sm:py-20">
+      <div className="border-b border-stone-800/70">
+        <div className="mx-auto max-w-7xl px-6 py-18 sm:py-22">
           <AnimatedSection className="text-center">
-            <p className="text-sm font-semibold uppercase tracking-widest text-amber-500">
+            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-amber-400">
               Stay Updated
             </p>
-            <h2 className="mt-2 font-heading text-3xl font-bold sm:text-4xl">
+            <h2 className="mt-4 font-heading text-4xl font-bold sm:text-5xl">
               Subscribe to Our Newsletter
             </h2>
-            <p className="mt-4 text-zinc-400 max-w-lg mx-auto">
+            <p className="mt-4 text-stone-400 max-w-lg mx-auto text-base leading-relaxed">
               Get the latest drops, exclusive deals, and style tips delivered
               straight to your inbox.
             </p>
 
-            {/* Email form */}
             <form
               onSubmit={handleSubmit}
-              className="mt-8 mx-auto flex max-w-md gap-3"
+              className="mt-10 mx-auto flex max-w-md gap-3"
             >
               <div className="relative flex-1">
                 <motion.div
                   animate={
                     focused
-                      ? { boxShadow: "0 0 0 3px rgba(245,158,11,0.3)" }
-                      : { boxShadow: "0 0 0 0px rgba(245,158,11,0)" }
+                      ? { boxShadow: "0 0 0 3px rgba(217,119,6,0.25)" }
+                      : { boxShadow: "0 0 0 0px rgba(217,119,6,0)" }
                   }
                   className="rounded-full"
                 >
@@ -86,25 +80,24 @@ export default function Footer() {
                     onFocus={() => setFocused(true)}
                     onBlur={() => setFocused(false)}
                     required
-                    className="w-full rounded-full bg-zinc-800 border border-zinc-700 px-6 py-3.5 text-sm text-white placeholder:text-zinc-500 focus:outline-none focus:border-amber-500 transition-colors"
+                    className="w-full rounded-full bg-stone-800/80 border border-stone-700/60 px-6 py-3.5 text-sm text-white placeholder:text-stone-500 focus:outline-none focus:border-amber-500/50 transition-all duration-300"
                   />
                 </motion.div>
               </div>
               <button
                 type="submit"
-                className="inline-flex items-center gap-2 rounded-full bg-amber-500 px-6 py-3.5 text-sm font-semibold text-white transition-all duration-300 hover:bg-amber-600 hover:shadow-lg hover:shadow-amber-500/25 active:scale-95"
+                className="inline-flex items-center gap-2 rounded-full btn-slide px-6 py-3.5 text-sm font-semibold text-white transition-all duration-300 hover:shadow-lg hover:shadow-amber-500/25 active:scale-95 tracking-wider uppercase"
               >
-                <Send size={16} />
+                <Send size={14} />
                 <span className="hidden sm:inline">Subscribe</span>
               </button>
             </form>
 
-            {/* Success message */}
             {subscribed && (
               <motion.p
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="mt-4 text-sm text-emerald-400"
+                className="mt-5 text-sm text-emerald-400"
               >
                 ✓ Thanks for subscribing!
               </motion.p>
@@ -113,47 +106,46 @@ export default function Footer() {
         </div>
       </div>
 
-      {/* Footer grid */}
-      <div className="mx-auto max-w-7xl px-6 py-12 sm:py-16">
-        <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4">
-          {/* Brand */}
+      <div className="mx-auto max-w-7xl px-6 py-14 sm:py-18">
+        <div className="grid grid-cols-1 gap-12 sm:grid-cols-2 lg:grid-cols-4">
           <div>
             <a
               href="#"
-              className="text-2xl font-heading font-bold tracking-tight"
+              className="group inline-flex items-center gap-1.5"
             >
-              LUXE<span className="text-amber-500">.</span>
+              <span className="text-3xl font-heading font-bold tracking-wide text-white">
+                LUXE
+              </span>
+              <span className="text-3xl font-heading font-bold text-amber-400 transition-all duration-300 group-hover:scale-150 group-hover:rotate-12 inline-block">.</span>
             </a>
-            <p className="mt-4 text-sm text-zinc-400 leading-relaxed">
+            <p className="mt-5 text-sm text-stone-400 leading-relaxed max-w-xs">
               Premium clothing, bags, and accessories for those who appreciate
               quality and timeless design.
             </p>
-            {/* Social links */}
-            <div className="mt-6 flex gap-3">
+            <div className="mt-6 flex gap-2.5">
               {socials.map((s) => (
                 <a
                   key={s.label}
                   href={s.href}
                   aria-label={s.label}
-                  className="flex h-10 w-10 items-center justify-center rounded-full bg-zinc-800 text-zinc-400 transition-all duration-300 hover:bg-amber-500 hover:text-white hover:shadow-lg hover:shadow-amber-500/25"
+                  className="flex h-10 w-10 items-center justify-center rounded-full bg-stone-800/80 text-stone-400 transition-all duration-300 hover:bg-amber-500 hover:text-white hover:shadow-lg hover:shadow-amber-500/25 active:scale-90"
                 >
-                  <s.icon size={18} />
+                  <s.icon size={17} />
                 </a>
               ))}
             </div>
           </div>
 
-          {/* Quick links */}
           <div>
-            <h4 className="font-heading text-sm font-semibold uppercase tracking-wider text-zinc-300">
+            <h4 className="font-heading text-sm font-semibold uppercase tracking-[0.15em] text-stone-300">
               Quick Links
             </h4>
-            <ul className="mt-4 space-y-3">
+            <ul className="mt-6 space-y-3.5">
               {quickLinks.map((link) => (
                 <li key={link.label}>
                   <a
                     href={link.href}
-                    className="text-sm text-zinc-400 transition-colors hover:text-amber-500"
+                    className="text-sm text-stone-400 transition-colors duration-300 hover:text-amber-400"
                   >
                     {link.label}
                   </a>
@@ -162,17 +154,16 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Help */}
           <div>
-            <h4 className="font-heading text-sm font-semibold uppercase tracking-wider text-zinc-300">
+            <h4 className="font-heading text-sm font-semibold uppercase tracking-[0.15em] text-stone-300">
               Help
             </h4>
-            <ul className="mt-4 space-y-3">
+            <ul className="mt-6 space-y-3.5">
               {helpLinks.map((link) => (
                 <li key={link.label}>
                   <a
                     href={link.href}
-                    className="text-sm text-zinc-400 transition-colors hover:text-amber-500"
+                    className="text-sm text-stone-400 transition-colors duration-300 hover:text-amber-400"
                   >
                     {link.label}
                   </a>
@@ -181,32 +172,29 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Contact */}
           <div>
-            <h4 className="font-heading text-sm font-semibold uppercase tracking-wider text-zinc-300">
+            <h4 className="font-heading text-sm font-semibold uppercase tracking-[0.15em] text-stone-300">
               Contact
             </h4>
-            <ul className="mt-4 space-y-3 text-sm text-zinc-400">
-              <li>hello@luxestore.com</li>
-              <li>+1 (555) 123-4567</li>
-              <li>123 Fashion Ave, New York, NY 10001</li>
+            <ul className="mt-6 space-y-3.5 text-sm text-stone-400">
+              <li className="hover:text-stone-300 transition-colors cursor-default">hello@luxestore.com</li>
+              <li className="hover:text-stone-300 transition-colors cursor-default">+1 (555) 123-4567</li>
+              <li className="hover:text-stone-300 transition-colors cursor-default leading-relaxed">123 Fashion Ave, New York, NY 10001</li>
             </ul>
           </div>
         </div>
 
-        {/* Bottom bar */}
-        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-zinc-800 pt-8 sm:flex-row">
-          <p className="text-sm text-zinc-500">
+        <div className="mt-14 flex flex-col items-center justify-between gap-4 border-t border-stone-800/70 pt-8 sm:flex-row">
+          <p className="text-sm text-stone-500">
             © {new Date().getFullYear()} LUXE. All rights reserved.
           </p>
 
-          {/* Back to top */}
           <button
             onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
             aria-label="Back to top"
-            className="inline-flex items-center gap-2 rounded-full border border-zinc-700 px-4 py-2 text-sm text-zinc-400 transition-all duration-300 hover:bg-amber-500 hover:text-white hover:border-amber-500"
+            className="group inline-flex items-center gap-2 rounded-full border border-stone-700/60 px-5 py-2.5 text-sm text-stone-400 transition-all duration-300 hover:bg-gradient-to-r hover:from-amber-500 hover:to-amber-600 hover:text-white hover:border-amber-500 active:scale-95 tracking-wider uppercase"
           >
-            <ArrowUp size={14} />
+            <ArrowUp size={13} className="transition-transform duration-300 group-hover:-translate-y-0.5" />
             Back to top
           </button>
         </div>

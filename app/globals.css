@@ -1,15 +1,10 @@
 @import "tailwindcss";
 
-/* ================================================================
-   Design Tokens — Tailwind CSS v4 @theme
-   ================================================================ */
 @theme inline {
-  /* Fonts */
-  --font-heading: var(--font-poppins), "Poppins", sans-serif;
-  --font-body: var(--font-inter), "Inter", sans-serif;
+  --font-heading: var(--font-cormorant), "Cormorant Garamond", Georgia, serif;
+  --font-body: var(--font-outfit), "Outfit", sans-serif;
   --font-sans: var(--font-body);
 
-  /* Accent color — change this to re-theme the entire site */
   --color-amber-50: #FFFBEB;
   --color-amber-100: #FEF3C7;
   --color-amber-200: #FDE68A;
@@ -18,24 +13,32 @@
   --color-amber-500: #F59E0B;
   --color-amber-600: #D97706;
   --color-amber-700: #B45309;
+
+  --color-cream-50: #fefcf8;
+  --color-cream-100: #fcf7ed;
+  --color-cream-200: #f7edd6;
+  --color-cream-300: #f0dbb5;
+  --color-cream-400: #e8c890;
+  --color-cream-500: #dfb36a;
+  --color-cream-600: #c99444;
 }
 
-/* ================================================================
-   Light / Dark Mode CSS Variables
-   ================================================================ */
 :root {
-  --background: #ffffff;
-  --foreground: #18181B;
+  --background: #fefcf8;
+  --foreground: #1c1917;
+  --muted: #a8a29e;
+  --card: #ffffff;
+  --card-border: #e7e5e4;
 }
 
 [data-theme="dark"] {
-  --background: #09090B;
-  --foreground: #FAFAFA;
+  --background: #0c0a09;
+  --foreground: #fafaf9;
+  --muted: #78716c;
+  --card: #1c1917;
+  --card-border: #292524;
 }
 
-/* ================================================================
-   Base Styles
-   ================================================================ */
 html {
   scroll-behavior: smooth;
 }
@@ -48,30 +51,24 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Apply dark class styling via data-theme attribute */
 [data-theme="dark"] {
   color-scheme: dark;
 }
 
-/* Map data-theme to Tailwind's dark: variant */
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
-/* ================================================================
-   Font Utility Classes
-   ================================================================ */
 .font-heading {
   font-family: var(--font-heading);
+  font-weight: 600;
+  letter-spacing: 0.01em;
 }
 
 .font-body {
   font-family: var(--font-body);
 }
 
-/* ================================================================
-   Custom Scrollbar (subtle)
-   ================================================================ */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
 }
 
 ::-webkit-scrollbar-track {
@@ -79,18 +76,38 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #d4d4d8;
+  background: linear-gradient(to bottom, #d6d3d1, #a8a29e);
   border-radius: 999px;
 }
 
 [data-theme="dark"] ::-webkit-scrollbar-thumb {
-  background: #3f3f46;
+  background: linear-gradient(to bottom, #44403c, #57534e);
 }
 
-/* ================================================================
-   Selection Color
-   ================================================================ */
 ::selection {
-  background-color: #F59E0B;
+  background-color: #D97706;
   color: white;
+}
+
+img {
+  transition: filter 0.3s ease;
+}
+
+img[loading="lazy"] {
+  filter: blur(0px);
+}
+
+img[loading="lazy"]:not([src]) {
+  filter: blur(10px);
+}
+
+.btn-slide {
+  background-image: linear-gradient(to right, #F09819 0%, #EDDE5D 51%, #F09819 100%);
+  background-size: 200% auto;
+  background-position: left center;
+  transition: background-position 0.5s ease, box-shadow 0.5s ease, transform 0.5s ease;
+}
+
+.btn-slide:hover {
+  background-position: right center;
 }
