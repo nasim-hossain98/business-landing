@@ -3,9 +3,11 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import Link from "next/link";
-import { Search, ShoppingBag, Menu, X, Sun, Moon } from "lucide-react";
+import { ShoppingBag, Menu, X, Sun, Moon } from "lucide-react";
 import { useTheme } from "@/components/providers/ThemeProvider";
 import { useCart } from "@/components/providers/CartContext";
+import RegisterModal from "@/components/RegisterModal";
+import SearchOverlay from "@/components/SearchOverlay";
 
 const navLinks = [
   { label: "Shop", href: "/#products" },
@@ -17,6 +19,7 @@ const navLinks = [
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [registerModalOpen, setRegisterModalOpen] = useState(false);
   const { theme, toggleTheme } = useTheme();
   const { totalItems } = useCart();
   const prefersReduced = useReducedMotion();
@@ -72,12 +75,12 @@ export default function Navbar() {
           </ul>
 
           <div className="flex items-center gap-3">
-            <Link
-              href="/register"
+            <button
+              onClick={() => setRegisterModalOpen(true)}
               className="hidden sm:inline-flex items-center rounded-full btn-slide px-5 py-2 text-xs font-semibold text-white shadow-md shadow-amber-500/20 transition-all duration-300 hover:shadow-lg hover:shadow-amber-500/30 hover:scale-105 active:scale-95 tracking-wider uppercase"
             >
               Register
-            </Link>
+            </button>
             <button
               onClick={toggleTheme}
               aria-label="Toggle dark mode"
@@ -85,12 +88,7 @@ export default function Navbar() {
             >
               {theme === "dark" ? <Sun size={17} /> : <Moon size={17} />}
             </button>
-            <button
-              aria-label="Search"
-              className="rounded-full p-2.5 text-stone-400 hover:bg-stone-800/80 hover:text-amber-400 transition-all duration-300 active:scale-90"
-            >
-              <Search size={17} />
-            </button>
+            <SearchOverlay />
             <Link
               href="/cart"
               aria-label="Shopping cart"
@@ -161,18 +159,19 @@ export default function Navbar() {
                     </Link>
                   </motion.div>
                 ))}
-                <Link
-                  href="/register"
-                  onClick={() => setMobileOpen(false)}
-                  className="mt-3 block rounded-xl btn-slide px-4 py-3.5 text-center text-sm font-semibold text-white shadow-lg shadow-amber-500/20 transition-all duration-300 hover:shadow-xl hover:shadow-amber-500/30 uppercase tracking-wider"
+                <button
+                  onClick={() => { setRegisterModalOpen(true); setMobileOpen(false); }}
+                  className="mt-3 block w-full rounded-xl btn-slide px-4 py-3.5 text-center text-sm font-semibold text-white shadow-lg shadow-amber-500/20 transition-all duration-300 hover:shadow-xl hover:shadow-amber-500/30 uppercase tracking-wider"
                 >
                   Register
-                </Link>
+                </button>
               </nav>
             </motion.div>
           </>
         )}
       </AnimatePresence>
+
+      <RegisterModal open={registerModalOpen} onClose={() => setRegisterModalOpen(false)} />
     </>
   );
 }
