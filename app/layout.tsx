@@ -25,7 +25,7 @@ const outfit = Outfit({
 export const metadata: Metadata = {
   title: "LUXE — Premium Clothing & Accessories",
   description:
-    "Shop premium clothing, leather wallets, bags, and accessories. Free shipping on orders over $50. Discover timeless style at LUXE.",
+    "Shop premium clothing, leather wallets, bags, and accessories. Free shipping on orders over ৳50. Discover timeless style at LUXE.",
   keywords: [
     "luxury fashion",
     "premium accessories",

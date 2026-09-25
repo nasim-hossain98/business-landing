@@ -89,7 +89,7 @@ export default async function ProductPage({
               </div>
 
               <p className="text-3xl font-bold text-stone-900 dark:text-white mb-8">
-                ${product.price.toFixed(2)}
+                ৳{product.price.toFixed(2)}
               </p>
 
               <div className="prose prose-stone dark:prose-invert max-w-none mb-10">

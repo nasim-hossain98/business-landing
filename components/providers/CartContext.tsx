@@ -6,6 +6,7 @@ import type { Product } from "@/data/products";
 export type CartItemType = {
   product: Product;
   quantity: number;
+  selectedOption: string;
 };
 
 export type CustomerInfo = {
@@ -26,10 +27,10 @@ type CartState = {
 };
 
 type CartAction =
-  | { type: "ADD_ITEM"; product: Product }
-  | { type: "REMOVE_ITEM"; productId: number }
-  | { type: "INCREMENT"; productId: number }
-  | { type: "DECREMENT"; productId: number }
+  | { type: "ADD_ITEM"; product: Product; option: string }
+  | { type: "REMOVE_ITEM"; productId: number; option: string }
+  | { type: "INCREMENT"; productId: number; option: string }
+  | { type: "DECREMENT"; productId: number; option: string }
   | { type: "CLEAR_CART" }
   | { type: "SET_CUSTOMER"; customer: CustomerInfo }
   | { type: "SET_PAYMENT"; method: PaymentMethod }
@@ -46,10 +47,10 @@ const defaultCustomer: CustomerInfo = {
 
 const CartContext = createContext<{
   state: CartState;
-  addItem: (product: Product) => void;
-  removeItem: (productId: number) => void;
-  increment: (productId: number) => void;
-  decrement: (productId: number) => void;
+  addItem: (product: Product, option: string) => void;
+  removeItem: (productId: number, option: string) => void;
+  increment: (productId: number, option: string) => void;
+  decrement: (productId: number, option: string) => void;
   clearCart: () => void;
   setCustomer: (customer: CustomerInfo) => void;
   setPaymentMethod: (method: PaymentMethod) => void;
@@ -62,26 +63,28 @@ const STORAGE_KEY = "luxe-cart";
 function cartReducer(state: CartState, action: CartAction): CartState {
   switch (action.type) {
     case "ADD_ITEM": {
-      const existing = state.items.find((i) => i.product.id === action.product.id);
+      const existing = state.items.find(
+        (i) => i.product.id === action.product.id && i.selectedOption === action.option
+      );
       if (existing) {
         return {
           ...state,
           items: state.items.map((i) =>
-            i.product.id === action.product.id
+            i.product.id === action.product.id && i.selectedOption === action.option
               ? { ...i, quantity: i.quantity + 1 }
               : i,
           ),
         };
       }
-      return { ...state, items: [...state.items, { product: action.product, quantity: 1 }] };
+      return { ...state, items: [...state.items, { product: action.product, quantity: 1, selectedOption: action.option }] };
     }
     case "REMOVE_ITEM":
-      return { ...state, items: state.items.filter((i) => i.product.id !== action.productId) };
+      return { ...state, items: state.items.filter((i) => !(i.product.id === action.productId && i.selectedOption === action.option)) };
     case "INCREMENT":
       return {
         ...state,
         items: state.items.map((i) =>
-          i.product.id === action.productId
+          i.product.id === action.productId && i.selectedOption === action.option
             ? { ...i, quantity: i.quantity + 1 }
             : i,
         ),
@@ -91,7 +94,7 @@ function cartReducer(state: CartState, action: CartAction): CartState {
         ...state,
         items: state.items
           .map((i) =>
-            i.product.id === action.productId
+            i.product.id === action.productId && i.selectedOption === action.option
               ? { ...i, quantity: i.quantity - 1 }
               : i,
           )
@@ -133,10 +136,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
   }, [state]);
 
-  const addItem = (product: Product) => dispatch({ type: "ADD_ITEM", product });
-  const removeItem = (productId: number) => dispatch({ type: "REMOVE_ITEM", productId });
-  const increment = (productId: number) => dispatch({ type: "INCREMENT", productId });
-  const decrement = (productId: number) => dispatch({ type: "DECREMENT", productId });
+  const addItem = (product: Product, option: string) => dispatch({ type: "ADD_ITEM", product, option });
+  const removeItem = (productId: number, option: string) => dispatch({ type: "REMOVE_ITEM", productId, option });
+  const increment = (productId: number, option: string) => dispatch({ type: "INCREMENT", productId, option });
+  const decrement = (productId: number, option: string) => dispatch({ type: "DECREMENT", productId, option });
   const clearCart = () => dispatch({ type: "CLEAR_CART" });
   const setCustomer = (customer: CustomerInfo) => dispatch({ type: "SET_CUSTOMER", customer });
   const setPaymentMethod = (method: PaymentMethod) => dispatch({ type: "SET_PAYMENT", method });

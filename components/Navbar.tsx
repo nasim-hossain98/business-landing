@@ -24,6 +24,13 @@ export default function Navbar() {
   const { totalItems } = useCart();
   const prefersReduced = useReducedMotion();
 
+  // Icon buttons adapt to the transparent (light hero) vs scrolled (dark bar) states.
+  const iconBtnClass = `rounded-full p-2.5 transition-all duration-300 active:scale-90 ${
+    scrolled
+      ? "text-stone-300 hover:bg-white/10 hover:text-amber-400"
+      : "text-stone-600 hover:bg-stone-900/5 hover:text-amber-600"
+  }`;
+
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener("scroll", handleScroll, { passive: true });
@@ -52,10 +59,14 @@ export default function Navbar() {
             href="/"
             className="group flex items-center gap-1.5"
           >
-            <span className="text-3xl font-heading font-bold tracking-wide text-white transition-colors duration-300">
+            <span
+              className={`text-3xl font-heading font-bold tracking-wide transition-colors duration-300 ${
+                scrolled ? "text-white" : "text-stone-900"
+              }`}
+            >
               LUXE
             </span>
-            <span className="text-3xl font-heading font-bold text-amber-400 transition-all duration-300 group-hover:scale-150 group-hover:rotate-12 inline-block">
+            <span className="text-3xl font-heading font-bold text-amber-500 transition-all duration-300 group-hover:scale-150 group-hover:rotate-12 inline-block">
               .
             </span>
           </Link>
@@ -65,7 +76,11 @@ export default function Navbar() {
               <li key={link.label}>
                 <Link
                   href={link.href}
-                  className="relative text-sm font-medium tracking-wider text-stone-300 hover:text-amber-300 transition-colors duration-300 group uppercase"
+                  className={`relative text-sm font-medium tracking-wider transition-colors duration-300 group uppercase ${
+                    scrolled
+                      ? "text-stone-300 hover:text-amber-300"
+                      : "text-stone-700 hover:text-amber-600"
+                  }`}
                 >
                   {link.label}
                   <span className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 h-[1.5px] w-0 bg-gradient-to-r from-amber-400 to-amber-500 transition-all duration-300 rounded-full group-hover:w-full" />
@@ -84,15 +99,15 @@ export default function Navbar() {
             <button
               onClick={toggleTheme}
               aria-label="Toggle dark mode"
-              className="rounded-full p-2.5 text-stone-400 hover:bg-stone-800/80 hover:text-amber-400 transition-all duration-300 active:scale-90"
+              className={iconBtnClass}
             >
               {theme === "dark" ? <Sun size={17} /> : <Moon size={17} />}
             </button>
-            <SearchOverlay />
+            <SearchOverlay scrolled={scrolled} />
             <Link
               href="/cart"
               aria-label="Shopping cart"
-              className="relative rounded-full p-2.5 text-stone-400 hover:bg-stone-800/80 hover:text-amber-400 transition-all duration-300 active:scale-90"
+              className={`relative ${iconBtnClass}`}
             >
               <ShoppingBag size={17} />
               {totalItems > 0 && (
@@ -104,7 +119,7 @@ export default function Navbar() {
             <button
               onClick={() => setMobileOpen(true)}
               aria-label="Open menu"
-              className="rounded-full p-2.5 text-stone-400 hover:bg-stone-800/80 transition-all duration-300 md:hidden active:scale-90"
+              className={`md:hidden ${iconBtnClass}`}
             >
               <Menu size={20} />
             </button>

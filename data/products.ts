@@ -1,3 +1,8 @@
+export type ProductOption = {
+  label: string;
+  values: string[];
+};
+
 export type Product = {
   id: number;
   name: string;
@@ -9,6 +14,7 @@ export type Product = {
   features: string[];
   rating: number;
   reviewCount: number;
+  options: ProductOption[];
 };
 
 export const products: Product[] = [
@@ -27,7 +33,8 @@ export const products: Product[] = [
       "Fully lined interior"
     ],
     rating: 4.8,
-    reviewCount: 124
+    reviewCount: 124,
+    options: [{ label: "Size", values: ["S", "M", "L", "XL", "2XL", "3XL"] }]
   },
   {
     id: 2,
@@ -44,7 +51,8 @@ export const products: Product[] = [
       "Slim profile design"
     ],
     rating: 4.9,
-    reviewCount: 342
+    reviewCount: 342,
+    options: [{ label: "Color", values: ["Black", "Brown", "Tan", "Cognac"] }]
   },
   {
     id: 3,
@@ -60,7 +68,8 @@ export const products: Product[] = [
       "Water-resistant bottom"
     ],
     rating: 4.7,
-    reviewCount: 89
+    reviewCount: 89,
+    options: [{ label: "Color", values: ["Black", "Brown", "Tan", "Navy", "Olive"] }]
   },
   {
     id: 4,
@@ -76,7 +85,8 @@ export const products: Product[] = [
       "Tailored fit"
     ],
     rating: 4.6,
-    reviewCount: 215
+    reviewCount: 215,
+    options: [{ label: "Size", values: ["S", "M", "L", "XL", "2XL", "3XL"] }]
   },
   {
     id: 5,
@@ -93,7 +103,8 @@ export const products: Product[] = [
       "Multiple interior compartments"
     ],
     rating: 4.9,
-    reviewCount: 156
+    reviewCount: 156,
+    options: [{ label: "Color", values: ["Black", "Brown", "Tan", "Navy", "Burgundy"] }]
   },
   {
     id: 6,
@@ -109,7 +120,8 @@ export const products: Product[] = [
       "Hand-stitched edges"
     ],
     rating: 4.8,
-    reviewCount: 421
+    reviewCount: 421,
+    options: [{ label: "Color", values: ["Black", "Brown", "Tan", "Cognac"] }]
   },
   {
     id: 7,
@@ -126,7 +138,8 @@ export const products: Product[] = [
       "Adjustable waist tabs"
     ],
     rating: 4.5,
-    reviewCount: 78
+    reviewCount: 78,
+    options: [{ label: "Size", values: ["S", "M", "L", "XL", "2XL", "3XL"] }]
   },
   {
     id: 8,
@@ -142,7 +155,8 @@ export const products: Product[] = [
       "Hand-burnished edges"
     ],
     rating: 4.7,
-    reviewCount: 112
+    reviewCount: 112,
+    options: [{ label: "Waist Size", values: ["30", "32", "34", "36", "38", "40"] }]
   },
   {
     id: 9,
@@ -158,7 +172,8 @@ export const products: Product[] = [
       "Large 36x36 inch square"
     ],
     rating: 4.9,
-    reviewCount: 45
+    reviewCount: 45,
+    options: [{ label: "Color", values: ["Navy", "Burgundy", "Emerald", "Blush"] }]
   },
   {
     id: 10,
@@ -175,6 +190,7 @@ export const products: Product[] = [
       "Includes protective leather case"
     ],
     rating: 4.6,
-    reviewCount: 67
+    reviewCount: 67,
+    options: [{ label: "Frame", values: ["Black Frame", "Gold Frame", "Tortoise Frame"] }]
   },
 ];

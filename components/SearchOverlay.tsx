@@ -8,7 +8,7 @@ import Image from "next/image";
 import { products } from "@/data/products";
 import type { Product } from "@/data/products";
 
-export default function SearchOverlay() {
+export default function SearchOverlay({ scrolled = true }: { scrolled?: boolean }) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
@@ -47,7 +47,11 @@ export default function SearchOverlay() {
       <button
         onClick={() => setOpen(true)}
         aria-label="Search"
-        className="rounded-full p-2.5 text-stone-400 hover:bg-stone-800/80 hover:text-amber-400 transition-all duration-300 active:scale-90"
+        className={`rounded-full p-2.5 transition-all duration-300 active:scale-90 ${
+          scrolled
+            ? "text-stone-300 hover:bg-white/10 hover:text-amber-400"
+            : "text-stone-600 hover:bg-stone-900/5 hover:text-amber-600"
+        }`}
       >
         <Search size={17} />
       </button>
@@ -135,7 +139,7 @@ export default function SearchOverlay() {
                             </p>
                           </div>
                           <span className="text-sm font-bold text-stone-900 dark:text-white tabular-nums">
-                            ${product.price.toFixed(2)}
+                            ৳{product.price.toFixed(2)}
                           </span>
                         </Link>
                       ))}

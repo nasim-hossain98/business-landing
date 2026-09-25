@@ -43,7 +43,7 @@ function StripeLogo() {
 
 const trustBadges = [
   { icon: Shield, title: "Secure Checkout", description: "256-bit SSL encryption" },
-  { icon: Truck, title: "Free Shipping", description: "On orders over $50" },
+  { icon: Truck, title: "Free Shipping", description: "On orders over ৳50" },
   { icon: RotateCcw, title: "Easy Returns", description: "30-day money back guarantee" },
   { icon: CreditCard, title: "Flexible Payment", description: "All major cards accepted" },
 ];

@@ -7,7 +7,7 @@ import { useCart, type CartItemType } from "@/components/providers/CartContext";
 
 export default function CartItemRow({ item }: { item: CartItemType }) {
   const { increment, decrement, removeItem } = useCart();
-  const { product, quantity } = item;
+  const { product, quantity, selectedOption } = item;
 
   return (
     <div className="flex gap-5 sm:gap-6 rounded-2xl bg-stone-50 dark:bg-stone-900 p-4 sm:p-5 transition-colors duration-300 hover:bg-stone-100 dark:hover:bg-stone-800/80">
@@ -32,15 +32,25 @@ export default function CartItemRow({ item }: { item: CartItemType }) {
           >
             {product.name}
           </Link>
-          <p className="mt-0.5 text-xs font-medium uppercase tracking-widest text-amber-500">
-            {product.category}
-          </p>
+          <div className="flex items-center gap-2 mt-0.5">
+            <span className="text-xs font-medium uppercase tracking-widest text-amber-500">
+              {product.category}
+            </span>
+            {selectedOption && (
+              <>
+                <span className="text-stone-300 dark:text-stone-600">/</span>
+                <span className="text-xs font-medium text-stone-600 dark:text-stone-400">
+                  {selectedOption}
+                </span>
+              </>
+            )}
+          </div>
         </div>
 
         <div className="flex items-center justify-between mt-3">
           <div className="flex items-center gap-2">
             <button
-              onClick={() => decrement(product.id)}
+              onClick={() => decrement(product.id, selectedOption)}
               aria-label="Decrease quantity"
               className="flex h-8 w-8 items-center justify-center rounded-lg border border-stone-200 dark:border-stone-700 text-stone-600 dark:text-stone-400 hover:bg-stone-200 dark:hover:bg-stone-700 transition-colors duration-200 active:scale-90"
             >
@@ -50,7 +60,7 @@ export default function CartItemRow({ item }: { item: CartItemType }) {
               {quantity}
             </span>
             <button
-              onClick={() => increment(product.id)}
+              onClick={() => increment(product.id, selectedOption)}
               aria-label="Increase quantity"
               className="flex h-8 w-8 items-center justify-center rounded-lg border border-stone-200 dark:border-stone-700 text-stone-600 dark:text-stone-400 hover:bg-stone-200 dark:hover:bg-stone-700 transition-colors duration-200 active:scale-90"
             >
@@ -60,10 +70,10 @@ export default function CartItemRow({ item }: { item: CartItemType }) {
 
           <div className="flex items-center gap-4">
             <span className="text-lg font-bold text-stone-900 dark:text-white tabular-nums">
-              ${(product.price * quantity).toFixed(2)}
+              ৳{(product.price * quantity).toFixed(2)}
             </span>
             <button
-              onClick={() => removeItem(product.id)}
+              onClick={() => removeItem(product.id, selectedOption)}
               aria-label={`Remove ${product.name} from cart`}
               className="rounded-lg p-2 text-stone-400 hover:bg-red-50 dark:hover:bg-red-500/10 hover:text-red-500 transition-all duration-200 active:scale-90"
             >

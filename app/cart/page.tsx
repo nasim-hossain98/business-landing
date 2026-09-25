@@ -13,7 +13,7 @@ import CheckoutModal from "@/components/CheckoutModal";
 import { useCart } from "@/components/providers/CartContext";
 
 const perks = [
-  { icon: Truck, label: "Free Shipping", sub: "On orders over $50" },
+  { icon: Truck, label: "Free Shipping", sub: "On orders over ৳50" },
   { icon: Shield, label: "Secure Payment", sub: "256-bit SSL encryption" },
   { icon: RotateCcw, label: "30-Day Returns", sub: "Hassle-free returns" },
 ];
@@ -124,26 +124,26 @@ export default function CartPage() {
                       <div className="flex justify-between text-stone-600 dark:text-stone-400">
                         <span>Subtotal ({totalItems} items)</span>
                         <span className="font-semibold text-stone-900 dark:text-white tabular-nums">
-                          ${totalPrice.toFixed(2)}
+                          ৳{totalPrice.toFixed(2)}
                         </span>
                       </div>
                       <div className="flex justify-between text-stone-600 dark:text-stone-400">
                         <span>Shipping</span>
                         <span className="font-semibold text-emerald-500">
-                          {totalPrice >= 50 ? "Free" : "$9.99"}
+                          {totalPrice >= 50 ? "Free" : "৳9.99"}
                         </span>
                       </div>
                       <div className="flex justify-between text-stone-600 dark:text-stone-400">
                         <span>Tax (estimated)</span>
                         <span className="font-semibold text-stone-900 dark:text-white tabular-nums">
-                          ${(totalPrice * 0.08).toFixed(2)}
+                          ৳{(totalPrice * 0.08).toFixed(2)}
                         </span>
                       </div>
                       <div className="h-px bg-stone-200 dark:bg-stone-700 my-2" />
                       <div className="flex justify-between">
                         <span className="text-base font-semibold text-stone-900 dark:text-white">Total</span>
                         <span className="text-xl font-bold text-stone-900 dark:text-white tabular-nums">
-                          ${(totalPrice + (totalPrice >= 50 ? 0 : 9.99) + totalPrice * 0.08).toFixed(2)}
+                          ৳{(totalPrice + (totalPrice >= 50 ? 0 : 9.99) + totalPrice * 0.08).toFixed(2)}
                         </span>
                       </div>
                     </div>
@@ -158,7 +158,7 @@ export default function CartPage() {
 
                     {totalPrice < 50 && (
                       <p className="mt-4 text-center text-xs text-stone-500 dark:text-stone-400">
-                        Add ${(50 - totalPrice).toFixed(2)} more for free shipping
+                        Add ৳{(50 - totalPrice).toFixed(2)} more for free shipping
                       </p>
                     )}
                   </div>

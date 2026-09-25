@@ -105,11 +105,11 @@ export default function CheckoutModal({ open, onClose }: { open: boolean; onClos
                               {item.product.name}
                             </p>
                             <p className="text-xs text-stone-500 dark:text-stone-400">
-                              Qty: {item.quantity}
+                              Qty: {item.quantity}{item.selectedOption ? ` — ${item.selectedOption}` : ""}
                             </p>
                           </div>
                           <span className="text-sm font-semibold text-stone-900 dark:text-white tabular-nums">
-                            ${(item.product.price * item.quantity).toFixed(2)}
+                            ৳{(item.product.price * item.quantity).toFixed(2)}
                           </span>
                         </div>
                       ))}
@@ -167,23 +167,23 @@ export default function CheckoutModal({ open, onClose }: { open: boolean; onClos
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between text-stone-600 dark:text-stone-400">
                       <span>Subtotal</span>
-                      <span className="tabular-nums">${totalPrice.toFixed(2)}</span>
+                      <span className="tabular-nums">৳{totalPrice.toFixed(2)}</span>
                     </div>
                     <div className="flex justify-between text-stone-600 dark:text-stone-400">
                       <span>Shipping</span>
                       <span className={shipping === 0 ? "text-emerald-500 font-medium" : "tabular-nums"}>
-                        {shipping === 0 ? "Free" : `$${shipping.toFixed(2)}`}
+                        {shipping === 0 ? "Free" : `৳${shipping.toFixed(2)}`}
                       </span>
                     </div>
                     <div className="flex justify-between text-stone-600 dark:text-stone-400">
                       <span>Tax</span>
-                      <span className="tabular-nums">${tax.toFixed(2)}</span>
+                      <span className="tabular-nums">৳{tax.toFixed(2)}</span>
                     </div>
                     <div className="h-px bg-stone-200 dark:bg-stone-700 my-1" />
                     <div className="flex justify-between">
                       <span className="text-base font-bold text-stone-900 dark:text-white">Total</span>
                       <span className="text-lg font-bold text-stone-900 dark:text-white tabular-nums">
-                        ${total.toFixed(2)}
+                        ৳{total.toFixed(2)}
                       </span>
                     </div>
                   </div>
@@ -195,7 +195,7 @@ export default function CheckoutModal({ open, onClose }: { open: boolean; onClos
                     className="w-full inline-flex items-center justify-center gap-2 rounded-full btn-slide px-8 py-4 text-sm font-semibold text-white shadow-lg shadow-amber-500/25 transition-all duration-500 hover:shadow-xl hover:shadow-amber-500/30 hover:scale-[1.02] active:scale-100 tracking-wider uppercase disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
                   >
                     <Package size={18} />
-                    Confirm Buy — ${total.toFixed(2)}
+                    Confirm Buy — ৳{total.toFixed(2)}
                   </button>
 
                   {!state.customer.fullName && (
