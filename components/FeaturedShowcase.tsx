@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
@@ -24,6 +24,22 @@ const DEPTH = [0, -60, 40, -30, 30, -50, 20];
 export default function FeaturedShowcase() {
   const prefersReduced = useReducedMotion();
   const sectionRef = useRef<HTMLElement | null>(null);
+  const trackRef = useRef<HTMLDivElement | null>(null);
+
+  // Exact horizontal travel in px: full track width minus one viewport, so the
+  // last card lands flush against the right edge with no trailing empty space.
+  const [distance, setDistance] = useState(0);
+
+  useEffect(() => {
+    const measure = () => {
+      const track = trackRef.current;
+      if (!track) return;
+      setDistance(Math.max(0, track.scrollWidth - window.innerWidth));
+    };
+    measure();
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
+  }, []);
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -31,7 +47,7 @@ export default function FeaturedShowcase() {
   });
 
   // Horizontal travel of the whole track + a gentle 3D turn as it moves.
-  const x = useTransform(scrollYProgress, [0, 1], ["2%", "-76%"]);
+  const x = useTransform(scrollYProgress, [0, 1], [0, -distance]);
   const rotateY = useTransform(scrollYProgress, [0, 0.5, 1], [7, 0, -7]);
   const progress = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
 
@@ -55,7 +71,7 @@ export default function FeaturedShowcase() {
         />
 
         {/* Section header */}
-        <div className="relative z-10 mx-auto w-full max-w-7xl px-6 pt-24 sm:pt-28">
+        <div className="pointer-events-none relative z-20 mx-auto w-full max-w-7xl px-6 pt-24 sm:pt-28">
           <div className="flex items-end justify-between gap-6">
             <div>
               <p className="text-sm font-semibold uppercase tracking-[0.25em] text-amber-400">
@@ -75,6 +91,7 @@ export default function FeaturedShowcase() {
         {/* Horizontal 3D track */}
         <div className="perspective-far relative z-10 flex flex-1 items-center">
           <motion.div
+            ref={trackRef}
             className="preserve-3d flex gap-8 px-[6vw] will-change-transform"
             style={
               prefersReduced ? undefined : { x, rotateY }

@@ -2,6 +2,7 @@ import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import Categories from "@/components/Categories";
 import FeaturedShowcase from "@/components/FeaturedShowcase";
+import Brands from "@/components/Brands";
 import ProductsGrid from "@/components/ProductsGrid";
 import Reviews from "@/components/Reviews";
 import TrustSection from "@/components/TrustSection";
@@ -18,6 +19,7 @@ export default function Home() {
       <Hero />
       <Categories />
       <FeaturedShowcase />
+      <Brands />
       <ProductsGrid />
       <Reviews />
       <TrustSection />
