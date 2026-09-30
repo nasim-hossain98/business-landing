@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useReducer, useEffect, type ReactNode } from "react";
 import type { Product } from "@/data/products";
+import type { PaymentMethod } from "@/lib/pricing";
 
 export type CartItemType = {
   product: Product;
@@ -15,10 +16,11 @@ export type CustomerInfo = {
   email: string;
   address: string;
   city: string;
+  postalCode: string;
   notes: string;
 };
 
-export type PaymentMethod = "bkash" | "nagad" | "cod";
+export type { PaymentMethod };
 
 type CartState = {
   items: CartItemType[];
@@ -28,9 +30,9 @@ type CartState = {
 
 type CartAction =
   | { type: "ADD_ITEM"; product: Product; option: string }
-  | { type: "REMOVE_ITEM"; productId: number; option: string }
-  | { type: "INCREMENT"; productId: number; option: string }
-  | { type: "DECREMENT"; productId: number; option: string }
+  | { type: "REMOVE_ITEM"; productId: string; option: string }
+  | { type: "INCREMENT"; productId: string; option: string }
+  | { type: "DECREMENT"; productId: string; option: string }
   | { type: "CLEAR_CART" }
   | { type: "SET_CUSTOMER"; customer: CustomerInfo }
   | { type: "SET_PAYMENT"; method: PaymentMethod }
@@ -42,15 +44,16 @@ const defaultCustomer: CustomerInfo = {
   email: "",
   address: "",
   city: "",
+  postalCode: "",
   notes: "",
 };
 
 const CartContext = createContext<{
   state: CartState;
   addItem: (product: Product, option: string) => void;
-  removeItem: (productId: number, option: string) => void;
-  increment: (productId: number, option: string) => void;
-  decrement: (productId: number, option: string) => void;
+  removeItem: (productId: string, option: string) => void;
+  increment: (productId: string, option: string) => void;
+  decrement: (productId: string, option: string) => void;
   clearCart: () => void;
   setCustomer: (customer: CustomerInfo) => void;
   setPaymentMethod: (method: PaymentMethod) => void;
@@ -137,9 +140,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }, [state]);
 
   const addItem = (product: Product, option: string) => dispatch({ type: "ADD_ITEM", product, option });
-  const removeItem = (productId: number, option: string) => dispatch({ type: "REMOVE_ITEM", productId, option });
-  const increment = (productId: number, option: string) => dispatch({ type: "INCREMENT", productId, option });
-  const decrement = (productId: number, option: string) => dispatch({ type: "DECREMENT", productId, option });
+  const removeItem = (productId: string, option: string) => dispatch({ type: "REMOVE_ITEM", productId, option });
+  const increment = (productId: string, option: string) => dispatch({ type: "INCREMENT", productId, option });
+  const decrement = (productId: string, option: string) => dispatch({ type: "DECREMENT", productId, option });
   const clearCart = () => dispatch({ type: "CLEAR_CART" });
   const setCustomer = (customer: CustomerInfo) => dispatch({ type: "SET_CUSTOMER", customer });
   const setPaymentMethod = (method: PaymentMethod) => dispatch({ type: "SET_PAYMENT", method });

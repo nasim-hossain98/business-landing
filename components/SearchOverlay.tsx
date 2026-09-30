@@ -1,16 +1,21 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { Search, X, Package } from "lucide-react";
 import Image from "next/image";
-import { products } from "@/data/products";
-import type { Product } from "@/data/products";
+import { products as seedProducts } from "@/data/products";
+import { productHref } from "@/components/shop/ProductCard";
+import { formatCurrency } from "@/lib/format";
+import type { StoreProduct } from "@/lib/products/types";
 
 export default function SearchOverlay({ scrolled = true }: { scrolled?: boolean }) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
+  const [remote, setRemote] = useState<StoreProduct[] | null>(null);
+  const [offline, setOffline] = useState(false);
+  const requestId = useRef(0);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -33,14 +38,52 @@ export default function SearchOverlay({ scrolled = true }: { scrolled?: boolean 
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [open]);
 
-  const filtered = query.trim()
-    ? products.filter(
-        (p) =>
-          p.name.toLowerCase().includes(query.toLowerCase()) ||
-          p.category.toLowerCase().includes(query.toLowerCase()) ||
-          p.description.toLowerCase().includes(query.toLowerCase()),
-      )
-    : [];
+  const term = query.trim();
+
+  // Live storefront search: debounced API call with the seed catalogue as an
+  // instant offline fallback, so search never feels broken.
+  useEffect(() => {
+    if (!term) return;
+
+    const id = ++requestId.current;
+    const timer = window.setTimeout(async () => {
+      try {
+        const response = await fetch(
+          `/api/products?q=${encodeURIComponent(term)}&limit=8`,
+          { headers: { Accept: "application/json" } },
+        );
+        if (!response.ok) throw new Error("search failed");
+        const data = (await response.json()) as { products?: StoreProduct[] };
+        if (requestId.current !== id || !Array.isArray(data.products)) return;
+        setRemote(data.products);
+        setOffline(false);
+      } catch {
+        if (requestId.current === id) {
+          setRemote(null);
+          setOffline(true);
+        }
+      }
+    }, 220);
+
+    return () => window.clearTimeout(timer);
+  }, [term, query]);
+
+  const localFallback: StoreProduct[] = useMemo(
+    () =>
+      term
+        ? seedProducts
+            .filter(
+              (product) =>
+                product.name.toLowerCase().includes(term.toLowerCase()) ||
+                product.category.toLowerCase().includes(term.toLowerCase()) ||
+                product.description.toLowerCase().includes(term.toLowerCase()),
+            )
+            .slice(0, 8)
+        : [],
+    [term],
+  );
+
+  const filtered = offline || !remote ? localFallback : remote;
 
   return (
     <>
@@ -117,7 +160,7 @@ export default function SearchOverlay({ scrolled = true }: { scrolled?: boolean 
                       {filtered.map((product) => (
                         <Link
                           key={product.id}
-                          href={`/product/${product.id}`}
+                          href={productHref(product)}
                           onClick={() => setOpen(false)}
                           className="flex items-center gap-4 px-6 py-4 hover:bg-stone-50 dark:hover:bg-stone-800/50 transition-colors duration-200"
                         >
@@ -139,7 +182,7 @@ export default function SearchOverlay({ scrolled = true }: { scrolled?: boolean 
                             </p>
                           </div>
                           <span className="text-sm font-bold text-stone-900 dark:text-white tabular-nums">
-                            ৳{product.price.toFixed(2)}
+                            {formatCurrency(product.price)}
                           </span>
                         </Link>
                       ))}

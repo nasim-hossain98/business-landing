@@ -1,15 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
 import { Globe, AtSign, Share2, Send, ArrowUp } from "lucide-react";
 import AnimatedSection from "@/components/ui/AnimatedSection";
 
 const quickLinks = [
-  { label: "Home", href: "#" },
-  { label: "Shop", href: "#products" },
-  { label: "Categories", href: "#categories" },
-  { label: "Reviews", href: "#reviews" },
+  { label: "Home", href: "/" },
+  { label: "Shop", href: "/shop" },
+  { label: "Track Order", href: "/track-order" },
+  { label: "Cart", href: "/cart" },
 ];
 
 const helpLinks = [
@@ -29,7 +29,6 @@ export default function Footer() {
   const [email, setEmail] = useState("");
   const [focused, setFocused] = useState(false);
   const [subscribed, setSubscribed] = useState(false);
-  const prefersReduced = useReducedMotion();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

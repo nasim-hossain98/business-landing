@@ -1,23 +1,33 @@
-export type ProductOption = {
-  label: string;
-  values: string[];
-};
+import { slugify, type StoreProduct } from "@/lib/products/types";
 
-export type Product = {
-  id: number;
-  name: string;
-  price: number;
-  category: "clothes" | "wallets" | "bags" | "others";
-  image: string;
-  badge?: string;
-  description: string;
-  features: string[];
-  rating: number;
-  reviewCount: number;
-  options: ProductOption[];
-};
+export type {
+  ProductCategory,
+  ProductOption,
+  ProductStatus,
+  StoreProduct,
+} from "@/lib/products/types";
 
-export const products: Product[] = [
+/** Legacy alias — the storefront components import `Product`. */
+export type Product = StoreProduct;
+
+/**
+ * Seed / fallback catalogue.
+ *
+ * The authoritative catalogue lives in Supabase (`products` table). This list
+ * is used for two things:
+ *   1. `supabase/migrations/001_products.sql` seeds the database with it.
+ *   2. When Supabase credentials are absent, `lib/db/local-store.ts` serves it
+ *      so the full basket → checkout → admin flow still runs locally.
+ *
+ * `dataCategory` values feed `Product["category"]`, so the shape is shared with
+ * the rest of the site (see `data/categories.ts`).
+ */
+type SeedProduct = Omit<
+  StoreProduct,
+  "id" | "slug" | "galleryImages" | "compareAtPrice" | "stockQuantity" | "status" | "sku"
+> & { id: number; sku?: string | null };
+
+const seed: SeedProduct[] = [
   {
     id: 1,
     name: "Classic Navy Blazer",
@@ -194,3 +204,33 @@ export const products: Product[] = [
     options: [{ label: "Frame", values: ["Black Frame", "Gold Frame", "Tortoise Frame"] }]
   },
 ];
+
+/**
+ * Storefront catalogue.
+ *
+ * `id` stays the numeric seed value as a string so existing deep links
+ * (`/product/1`) keep resolving, while `slug` becomes the canonical URL
+ * (`/product/classic-navy-blazer`).
+ */
+export const products: StoreProduct[] = seed.map((product) => ({
+  ...product,
+  id: String(product.id),
+  slug: slugify(product.name),
+  galleryImages: [],
+  compareAtPrice: null,
+  stockQuantity: 24,
+  status: "active",
+  sku: product.sku ?? null,
+}));
+
+/** Look up a seeded product by slug or legacy numeric id. */
+export function findSeedProduct(idOrSlug: string): StoreProduct | undefined {
+  const needle = idOrSlug.trim().toLowerCase();
+  return products.find(
+    (product) =>
+      product.id === needle ||
+      product.slug === needle ||
+      product.name.toLowerCase() === needle,
+  );
+}
+

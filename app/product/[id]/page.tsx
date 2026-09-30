@@ -1,19 +1,29 @@
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { Star, ChevronLeft, Check, Quote } from "lucide-react";
-import { products } from "@/data/products";
+import { Star, ChevronLeft, Check, Quote, Truck, Shield, RotateCcw } from "lucide-react";
 import { reviews } from "@/data/reviews";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import AnimatedSection from "@/components/ui/AnimatedSection";
 import ProductActions from "@/components/ProductActions";
+import { getProductBySlugOrId } from "@/lib/products/getProduct";
+import { formatCurrency } from "@/lib/format";
 
-export function generateStaticParams() {
-  return products.map((product) => ({
-    id: product.id.toString(),
-  }));
-}
+/**
+ * Product detail.
+ *
+ * The dynamic segment accepts both the canonical slug
+ * (`/product/classic-navy-blazer`) and the legacy numeric id (`/product/1`), so
+ * links shared before the catalogue moved into the database keep working.
+ */
+export const revalidate = 30;
+
+const perks = [
+  { icon: Truck, label: "Free shipping over ৳50" },
+  { icon: Shield, label: "Secure checkout" },
+  { icon: RotateCcw, label: "30-day returns" },
+];
 
 export default async function ProductPage({
   params,
@@ -21,7 +31,7 @@ export default async function ProductPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const product = products.find((p) => p.id.toString() === id);
+  const product = await getProductBySlugOrId(id);
 
   if (!product) {
     notFound();
@@ -32,6 +42,8 @@ export default async function ProductPage({
     productReviews = reviews.slice(0, 3);
   }
 
+  const inStock = product.stockQuantity > 0 && product.status === "active";
+
   return (
     <div className="flex flex-col min-h-screen">
       <Navbar />
@@ -40,11 +52,11 @@ export default async function ProductPage({
         <div className="mx-auto max-w-7xl px-6">
           <div className="py-6">
             <Link
-              href="/#products"
+              href="/shop"
               className="inline-flex items-center gap-2 text-sm font-medium text-stone-500 hover:text-amber-500 transition-colors duration-300"
             >
               <ChevronLeft size={16} />
-              Back to Collection
+              Back to Shop
             </Link>
           </div>
 
@@ -53,6 +65,11 @@ export default async function ProductPage({
               {product.badge && (
                 <div className="absolute top-6 left-6 z-10 rounded-full bg-gradient-to-r from-amber-400 to-amber-600 px-4 py-1.5 text-sm font-bold text-white shadow-lg tracking-wider uppercase">
                   {product.badge}
+                </div>
+              )}
+              {!inStock && (
+                <div className="absolute top-6 right-6 z-10 rounded-full bg-stone-900/90 px-4 py-1.5 text-xs font-bold text-white uppercase tracking-wider">
+                  Sold out
                 </div>
               )}
               <Image
@@ -84,13 +101,43 @@ export default async function ProductPage({
                   ))}
                 </div>
                 <span className="text-sm font-medium text-stone-600 dark:text-stone-400">
-                  {product.rating} ({product.reviewCount} reviews)
+                  {product.rating.toFixed(1)} · {product.reviewCount} reviews
                 </span>
               </div>
 
-              <p className="text-3xl font-bold text-stone-900 dark:text-white mb-8">
-                ৳{product.price.toFixed(2)}
-              </p>
+              <div className="mb-8 flex flex-wrap items-baseline gap-3">
+                <span className="text-3xl font-bold text-stone-900 dark:text-white">
+                  {formatCurrency(product.price)}
+                </span>
+                {product.compareAtPrice && product.compareAtPrice > product.price && (
+                  <span className="text-lg text-stone-400 line-through">
+                    {formatCurrency(product.compareAtPrice)}
+                  </span>
+                )}
+                <span
+                  className={`text-sm font-semibold ${
+                    inStock ? "text-emerald-500" : "text-red-500"
+                  }`}
+                >
+                  {inStock
+                    ? product.stockQuantity <= 5
+                      ? `Only ${product.stockQuantity} left`
+                      : "In stock"
+                    : "Out of stock"}
+                </span>
+              </div>
+
+              <div className="mb-8 space-y-3 border-y border-stone-200 dark:border-stone-800 py-6">
+                {perks.map((perk) => (
+                  <div
+                    key={perk.label}
+                    className="flex items-center gap-3 text-sm text-stone-600 dark:text-stone-300"
+                  >
+                    <perk.icon size={16} className="text-amber-500" />
+                    {perk.label}
+                  </div>
+                ))}
+              </div>
 
               <div className="prose prose-stone dark:prose-invert max-w-none mb-10">
                 <p className="text-lg text-stone-600 dark:text-stone-300 leading-relaxed">
@@ -98,23 +145,25 @@ export default async function ProductPage({
                 </p>
               </div>
 
-              <div className="mb-10">
-                <h3 className="font-heading text-lg font-semibold text-stone-900 dark:text-white mb-4">
-                  Key Features
-                </h3>
-                <ul className="space-y-3">
-                  {product.features.map((feature, i) => (
-                    <li key={i} className="flex items-center gap-3 text-stone-600 dark:text-stone-300">
-                      <div className="flex-shrink-0 flex items-center justify-center w-6 h-6 rounded-full bg-amber-100 dark:bg-amber-500/20 text-amber-500">
-                        <Check size={14} strokeWidth={3} />
-                      </div>
-                      {feature}
-                    </li>
-                  ))}
-                </ul>
-              </div>
+              {product.features.length > 0 && (
+                <div className="mb-10">
+                  <h3 className="font-heading text-lg font-semibold text-stone-900 dark:text-white mb-4">
+                    Key Features
+                  </h3>
+                  <ul className="space-y-3">
+                    {product.features.map((feature, i) => (
+                      <li key={i} className="flex items-center gap-3 text-stone-600 dark:text-stone-300">
+                        <div className="flex-shrink-0 flex items-center justify-center w-6 h-6 rounded-full bg-amber-100 dark:bg-amber-500/20 text-amber-500">
+                          <Check size={14} strokeWidth={3} />
+                        </div>
+                        {feature}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
 
-              <ProductActions product={product} />
+              <ProductActions product={product} disabled={!inStock} />
             </AnimatedSection>
           </div>
         </div>

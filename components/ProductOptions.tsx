@@ -1,29 +1,23 @@
 "use client";
 
 import { Check } from "lucide-react";
-import { products } from "@/data/products";
+import type { ProductOption } from "@/lib/products/types";
 
-export function getDefaultOption(productId: number): string {
-  const product = products.find((p) => p.id === productId);
-  return product?.options[0]?.values[0] ?? "";
-}
-
-export function getOptionLabel(productId: number): string {
-  const product = products.find((p) => p.id === productId);
-  return product?.options[0]?.label ?? "";
+/** First value of the first option group — the default selection on a card. */
+export function getDefaultOption(options: ProductOption[] | undefined): string {
+  return options?.[0]?.values[0] ?? "";
 }
 
 export default function ProductOptions({
   option,
   setOption,
-  productId,
+  options,
 }: {
   option: string;
   setOption: (v: string) => void;
-  productId: number;
+  options: ProductOption[];
 }) {
-  const product = products.find((p) => p.id === productId);
-  const opt = product?.options[0];
+  const opt = options[0];
   if (!opt) return null;
 
   return (

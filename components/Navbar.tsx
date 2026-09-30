@@ -10,9 +10,10 @@ import RegisterModal from "@/components/RegisterModal";
 import SearchOverlay from "@/components/SearchOverlay";
 
 const navLinks = [
-  { label: "Shop", href: "/#products" },
+  { label: "Shop", href: "/shop" },
   { label: "Categories", href: "/#categories" },
   { label: "Reviews", href: "/#reviews" },
+  { label: "Track Order", href: "/track-order" },
   { label: "Contact", href: "/#footer" },
 ];
 
@@ -71,7 +72,7 @@ export default function Navbar() {
             </span>
           </Link>
 
-          <ul className="hidden md:flex items-center gap-10">
+          <ul className="hidden md:flex items-center gap-6 lg:gap-10">
             {navLinks.map((link) => (
               <li key={link.label}>
                 <Link

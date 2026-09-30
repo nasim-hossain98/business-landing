@@ -10,19 +10,49 @@ import {
   useTransform,
   useReducedMotion,
 } from "framer-motion";
-import { products } from "@/data/products";
+import { products as seedProducts } from "@/data/products";
+import { productHref } from "@/components/shop/ProductCard";
+import type { StoreProduct } from "@/lib/products/types";
 
-// A curated "wave" of hero pieces — the standouts of the catalogue.
-const FEATURED_IDS = [1, 5, 7, 2, 3, 10, 6];
-const featured = FEATURED_IDS.map((id) => products.find((p) => p.id === id)!).filter(
-  Boolean,
-);
+/**
+ * The curtain of hero pieces. Products arrive from the server (Supabase or the
+ * local store); the curated running order below gives the row its rhythm, and
+ * anything the owner adds is appended so new drops surface automatically.
+ */
+const FEATURED_SLUGS = [
+  "classic-navy-blazer",
+  "leather-crossbody-bag",
+  "vintage-denim-jacket",
+  "leather-bifold-wallet",
+  "canvas-tote-bag",
+  "premium-sunglasses",
+  "minimalist-card-holder",
+];
+
+function curate(products: StoreProduct[]): StoreProduct[] {
+  const source = products.length > 0 ? products : seedProducts;
+  const picked: StoreProduct[] = [];
+  for (const slug of FEATURED_SLUGS) {
+    const match = source.find((p) => p.slug === slug && !picked.includes(p));
+    if (match) picked.push(match);
+  }
+  for (const product of source) {
+    if (picked.length >= 7) break;
+    if (!picked.includes(product)) picked.push(product);
+  }
+  return picked.slice(0, 7);
+}
 
 // Vertical depth offset per card so the row reads as a dimensional gallery.
 const DEPTH = [0, -60, 40, -30, 30, -50, 20];
 
-export default function FeaturedShowcase() {
+export default function FeaturedShowcase({
+  products = [],
+}: {
+  products?: StoreProduct[];
+}) {
   const prefersReduced = useReducedMotion();
+  const featured = curate(products);
   const sectionRef = useRef<HTMLElement | null>(null);
   const trackRef = useRef<HTMLDivElement | null>(null);
 
@@ -108,7 +138,7 @@ export default function FeaturedShowcase() {
                 }
               >
                 <Link
-                  href={`/product/${product.id}`}
+                  href={productHref(product)}
                   className="block focus:outline-none"
                 >
                   <div className="relative aspect-[3/4] overflow-hidden rounded-[1.75rem] bg-stone-900 shadow-2xl shadow-black/50 ring-1 ring-white/10 transition-all duration-500 group-hover:ring-amber-400/40">

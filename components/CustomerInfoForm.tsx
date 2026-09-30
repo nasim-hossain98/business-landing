@@ -1,12 +1,25 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import { User, Phone, Mail, MapPin, Building2, MessageSquare, Check, Pencil } from "lucide-react";
+import { User, Phone, Mail, MapPin, Building2, MessageSquare, Check, Pencil, Hash } from "lucide-react";
 import { useCart, type CustomerInfo } from "@/components/providers/CartContext";
 
-export default function CustomerInfoForm() {
+/**
+ * Delivery details editor.
+ *
+ * - `alwaysEditing={false}` (cart): the compact "save then continue" card.
+ * - `alwaysEditing` (checkout): the same fields, always open, kept in sync with
+ *   the cart context on every keystroke so `/checkout` can submit them.
+ *
+ * No duplicate checkout form — one component, two presentations.
+ */
+export default function CustomerInfoForm({
+  alwaysEditing = false,
+}: {
+  alwaysEditing?: boolean;
+}) {
   const { state, setCustomer } = useCart();
-  const [editing, setEditing] = useState(!state.customer.fullName);
+  const [editing, setEditing] = useState(alwaysEditing || !state.customer.fullName);
   const [saved, setSaved] = useState(false);
   const [form, setForm] = useState<CustomerInfo>(state.customer);
 
@@ -16,12 +29,13 @@ export default function CustomerInfoForm() {
     { key: "email" as const, label: "Email Address", icon: Mail, placeholder: "john@example.com", type: "email" },
     { key: "address" as const, label: "Street Address", icon: MapPin, placeholder: "House 12, Road 5, Banani", type: "text" },
     { key: "city" as const, label: "City", icon: Building2, placeholder: "Dhaka", type: "text" },
+    { key: "postalCode" as const, label: "Postal Code", icon: Hash, placeholder: "1213", type: "text" },
   ];
 
   const handleSave = (e: FormEvent) => {
     e.preventDefault();
     setCustomer(form);
-    setEditing(false);
+    if (!alwaysEditing) setEditing(false);
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
   };
@@ -45,13 +59,14 @@ export default function CustomerInfoForm() {
         )}
       </div>
 
-      {!editing && isFilled ? (
+      {!alwaysEditing && !editing && isFilled ? (
         <div className="space-y-3 text-sm">
           <InfoRow label="Name" value={state.customer.fullName} />
           <InfoRow label="Phone" value={state.customer.phone} />
           <InfoRow label="Email" value={state.customer.email || "—"} />
           <InfoRow label="Address" value={state.customer.address} />
           <InfoRow label="City" value={state.customer.city} />
+          <InfoRow label="Postal Code" value={state.customer.postalCode || "—"} />
           {state.customer.notes && <InfoRow label="Notes" value={state.customer.notes} />}
         </div>
       ) : (
@@ -66,9 +81,14 @@ export default function CustomerInfoForm() {
                   <f.icon size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-stone-400 dark:text-stone-500" />
                   <input
                     type={f.type}
-                    required={f.key === "fullName" || f.key === "phone" || f.key === "address" || f.key === "city"}
+                    required={f.key === "fullName" || f.key === "phone" || f.key === "address" || f.key === "city" || f.key === "postalCode"}
                     value={form[f.key]}
-                    onChange={(e) => setForm({ ...form, [f.key]: e.target.value })}
+                    onChange={(e) => {
+                      const next = { ...form, [f.key]: e.target.value };
+                      setForm(next);
+                      // Checkout streams edits straight into the cart context.
+                      if (alwaysEditing) setCustomer(next);
+                    }}
                     placeholder={f.placeholder}
                     className="w-full rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800 py-3 pl-10 pr-4 text-sm text-stone-900 dark:text-white placeholder-stone-400 dark:placeholder-stone-500 focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20 outline-none transition-all duration-200"
                   />

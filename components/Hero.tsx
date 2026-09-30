@@ -56,6 +56,13 @@ export default function Hero() {
   const stageShiftX = useTransform(sx, [-0.5, 0.5], [-18, 18]);
   const stageShiftY = useTransform(sy, [-0.5, 0.5], [-12, 12]);
 
+  // ---- Floating product cards parallax.
+  // Hooks must run unconditionally (never inside a `prefersReduced` branch),
+  // so the transforms are always created and only *applied* conditionally
+  // via the `style` prop below.
+  const walletLiftY = useTransform(sy, [-0.5, 0.5], [-10, 10]);
+  const toteLiftY = useTransform(sy, [-0.5, 0.5], [12, -8]);
+
   function onPointerMove(e: React.PointerEvent<HTMLElement>) {
     if (prefersReduced) return;
     const r = e.currentTarget.getBoundingClientRect();
@@ -426,7 +433,7 @@ export default function Hero() {
                   style={
                     prefersReduced
                       ? undefined
-                      : { y: useTransform(sy, [-0.5, 0.5], [-10, 10]) as any, rotate: -2 as any }
+                      : { y: walletLiftY, rotate: -2 }
                   }
                 >
                   <div className="rounded-2xl border border-white/70 bg-white p-2 shadow-[0_18px_40px_-12px_rgba(0,0,0,0.22)] backdrop-blur-xl">
@@ -451,7 +458,7 @@ export default function Hero() {
                   style={
                     prefersReduced
                       ? undefined
-                      : { y: useTransform(sy, [-0.5, 0.5], [12, -8]) as any }
+                      : { y: toteLiftY }
                   }
                 >
                   <div className="rounded-2xl border border-white/70 bg-white p-2 shadow-[0_18px_40px_-12px_rgba(0,0,0,0.22)] backdrop-blur-xl">

@@ -4,15 +4,17 @@ import Image from "next/image";
 import Link from "next/link";
 import { Minus, Plus, Trash2 } from "lucide-react";
 import { useCart, type CartItemType } from "@/components/providers/CartContext";
+import { productHref } from "@/components/shop/ProductCard";
 
 export default function CartItemRow({ item }: { item: CartItemType }) {
   const { increment, decrement, removeItem } = useCart();
   const { product, quantity, selectedOption } = item;
+  const href = productHref(product);
 
   return (
     <div className="flex gap-5 sm:gap-6 rounded-2xl bg-stone-50 dark:bg-stone-900 p-4 sm:p-5 transition-colors duration-300 hover:bg-stone-100 dark:hover:bg-stone-800/80">
       <Link
-        href={`/product/${product.id}`}
+        href={href}
         className="relative flex-shrink-0 h-24 w-24 sm:h-28 sm:w-28 overflow-hidden rounded-xl bg-stone-200 dark:bg-stone-800"
       >
         <Image
@@ -27,7 +29,7 @@ export default function CartItemRow({ item }: { item: CartItemType }) {
       <div className="flex flex-1 flex-col justify-between min-w-0">
         <div>
           <Link
-            href={`/product/${product.id}`}
+            href={href}
             className="font-heading text-lg font-semibold text-stone-900 dark:text-white hover:text-amber-500 dark:hover:text-amber-400 transition-colors duration-300 line-clamp-1"
           >
             {product.name}

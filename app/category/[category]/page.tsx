@@ -6,14 +6,11 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ProductsGrid from "@/components/ProductsGrid";
 import AnimatedSection from "@/components/ui/AnimatedSection";
+import { getProducts } from "@/lib/products/getProducts";
+import type { ProductCategory } from "@/lib/products/types";
 
-const slugToDataCategory: Record<string, string> = categories.reduce(
-  (acc, c) => {
-    acc[c.slug] = c.dataCategory;
-    return acc;
-  },
-  {} as Record<string, string>
-);
+/** Category pages read the live catalogue, so admin edits appear here too. */
+export const revalidate = 30;
 
 export function generateStaticParams() {
   return categories.map((c) => ({ category: c.slug }));
@@ -31,12 +28,10 @@ export default async function CategoryPage({
     notFound();
   }
 
-  const initialCategory = slugToDataCategory[category] as
-    | "all"
-    | "clothes"
-    | "wallets"
-    | "bags"
-    | "others";
+  const products = await getProducts({
+    category: cat.dataCategory as ProductCategory,
+    limit: 48,
+  });
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -66,7 +61,11 @@ export default async function CategoryPage({
             </p>
           </AnimatedSection>
 
-          <ProductsGrid initialCategory={initialCategory} hideHeader />
+          <ProductsGrid
+            products={products}
+            initialCategory={cat.dataCategory}
+            hideHeader
+          />
         </div>
       </main>
 
