@@ -15,6 +15,7 @@ import {
 import StatsCard from "@/components/admin/StatsCard";
 import OrdersTable from "@/components/admin/OrdersTable";
 import RevenueChart from "@/components/admin/RevenueChart";
+import { OrderStatusBadge } from "@/components/order/OrderStatusBadge";
 import { getAnalytics } from "@/lib/analytics/getAnalytics";
 import { formatCurrency } from "@/lib/format";
 
@@ -33,7 +34,7 @@ export default async function AdminDashboardPage() {
     hint?: string;
   }> = [
     {
-      label: "Total revenue",
+      label: "Total Revenue",
       value: data.totalRevenue,
       icon: Banknote,
       accent: "amber",
@@ -41,49 +42,49 @@ export default async function AdminDashboardPage() {
       hint: `${formatCurrency(data.revenueToday)} today`,
     },
     {
-      label: "Total orders",
+      label: "Total Orders",
       value: data.totalOrders,
       icon: Package,
       accent: "sky",
       hint: `${data.revenueByDay.reduce((sum, day) => sum + day.orders, 0)} in the last 30 days`,
     },
     {
-      label: "Pending",
+      label: "Pending Orders",
       value: data.pendingOrders,
       icon: Clock,
       accent: "rose",
       hint: "awaiting confirmation",
     },
     {
-      label: "Processing",
+      label: "Processing Orders",
       value: data.processingOrders,
       icon: Loader,
       accent: "violet",
       hint: `${data.confirmedOrders} confirmed`,
     },
     {
-      label: "Shipped",
+      label: "Shipped Orders",
       value: data.shippedOrders,
       icon: Truck,
       accent: "sky",
       hint: "in transit",
     },
     {
-      label: "Delivered",
+      label: "Delivered Orders",
       value: data.deliveredOrders,
       icon: CheckCircle2,
       accent: "emerald",
       hint: `${formatCurrency(data.averageOrderValue)} avg. order`,
     },
     {
-      label: "Products",
+      label: "Total Products",
       value: data.totalProducts,
       icon: Boxes,
       accent: "amber",
       hint: `${data.activeProducts} active`,
     },
     {
-      label: "Customers",
+      label: "Total Customers",
       value: data.totalCustomers,
       icon: Users,
       accent: "emerald",
@@ -154,7 +155,7 @@ export default async function AdminDashboardPage() {
         <div className="rounded-2xl border border-stone-800 bg-stone-900/60 p-5">
           <div className="mb-4 flex items-center justify-between">
             <h3 className="text-sm font-semibold uppercase tracking-[0.16em] text-stone-400">
-              Best selling
+              Best Selling Products
             </h3>
             <Link
               href="/admin/analytics"
@@ -198,7 +199,7 @@ export default async function AdminDashboardPage() {
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <h3 className="text-sm font-semibold uppercase tracking-[0.16em] text-stone-400">
-            Recent orders
+            Recent Orders
           </h3>
           <Link
             href="/admin/orders"
@@ -222,6 +223,38 @@ export default async function AdminDashboardPage() {
           </div>
         ) : (
           <OrdersTable orders={data.recentOrders} />
+        )}
+      </div>
+
+      {/* Order Status Overview — live counts per status from the orders table */}
+      <div className="space-y-4">
+        <h3 className="text-sm font-semibold uppercase tracking-[0.16em] text-stone-400">
+          Order Status Overview
+        </h3>
+        {data.totalOrders === 0 ? (
+          <div className="rounded-2xl border border-dashed border-stone-700 px-6 py-10 text-center">
+            <p className="text-sm text-stone-400">No orders yet</p>
+            <p className="mt-1 text-xs text-stone-600">
+              Orders placed by customers will appear here.
+            </p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 xl:grid-cols-7">
+            {data.statusDistribution.map((row) => (
+              <div
+                key={row.status}
+                className="rounded-xl border border-stone-800 bg-stone-900/60 px-4 py-3"
+              >
+                <OrderStatusBadge status={row.status} />
+                <p className="mt-2 text-lg font-semibold tabular-nums text-white">
+                  {row.count}
+                </p>
+                <p className="text-[11px] tabular-nums text-stone-500">
+                  {formatCurrency(row.revenue)}
+                </p>
+              </div>
+            ))}
+          </div>
         )}
       </div>
 

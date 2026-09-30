@@ -11,13 +11,16 @@ $slug = $cat.products[0].slug
 if (-not $slug) { throw 'no slug in catalogue' }
 Write-Host ("using product slug: {0}" -f $slug)
 
-# find an order number for the success page
+# find an order number for the success page (the store may be empty on a
+# fresh run — then the order-success page is skipped, which is a valid state)
+$orderNumber = $null
 $adminOrders = Invoke-RestMethod -Uri "$base/api/admin/orders?limit=1" -WebSession $sess -TimeoutSec 30
-$orderNumber = $adminOrders.orders[0].orderNumber
-if (-not $orderNumber) { throw 'no orders found' }
-Write-Host ("using order number: {0}" -f $orderNumber)
+if ($adminOrders.orders.Count -gt 0) { $orderNumber = $adminOrders.orders[0].orderNumber }
+if ($orderNumber) { Write-Host ("using order number: {0}" -f $orderNumber) }
+else { Write-Host 'no orders yet - skipping /order-success (empty state)' }
 
-$publicPages = @('/', '/shop', ("/product/" + $slug), '/cart', '/checkout', '/track-order', ("/order-success/" + $orderNumber), '/admin/login')
+$publicPages = @('/', '/shop', ("/product/" + $slug), '/cart', '/checkout', '/track-order', '/admin/login')
+if ($orderNumber) { $publicPages += ("/order-success/" + $orderNumber) }
 foreach ($p in $publicPages) {
   $r = Invoke-WebRequest -Uri ($base + $p) -UseBasicParsing -TimeoutSec 120
   Write-Host ("PUBLIC {0,-40} {1}" -f $p, $r.StatusCode)

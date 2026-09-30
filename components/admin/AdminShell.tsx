@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Store, ShieldCheck } from "lucide-react";
+import { Store, ShieldCheck, Settings, LogOut } from "lucide-react";
 import AdminSidebar from "@/components/admin/AdminSidebar";
 import AdminHeader from "@/components/admin/AdminHeader";
 import AdminMobileNav from "@/components/admin/AdminMobileNav";
@@ -58,7 +58,24 @@ export default function AdminShell({
           <AdminSidebar />
         </div>
 
-        <div className="space-y-3 border-t border-stone-800/80 p-4">
+        <div className="space-y-1 border-t border-stone-800/80 p-4">
+          <button
+            type="button"
+            disabled
+            title="Settings — coming soon"
+            className="flex w-full cursor-not-allowed items-center gap-2 rounded-xl px-3 py-2.5 text-xs font-medium text-stone-600"
+          >
+            <Settings size={15} />
+            Settings
+          </button>
+          <button
+            type="button"
+            onClick={handleSignOut}
+            className="flex w-full items-center gap-2 rounded-xl px-3 py-2.5 text-xs font-medium text-stone-400 transition-colors hover:bg-red-500/10 hover:text-red-400"
+          >
+            <LogOut size={15} />
+            Logout
+          </button>
           <Link
             href="/"
             target="_blank"
@@ -67,7 +84,7 @@ export default function AdminShell({
             <Store size={15} />
             View storefront
           </Link>
-          <p className="flex items-center gap-2 px-3 text-[11px] text-stone-600">
+          <p className="flex items-center gap-2 px-3 pt-1 text-[11px] text-stone-600">
             <ShieldCheck size={13} className="text-emerald-500/70" />
             Server-side protected
           </p>

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ExternalLink, LogOut, Menu, Store } from "lucide-react";
+import { Bell, ExternalLink, LogOut, Menu, Store } from "lucide-react";
 import { initials } from "@/lib/format";
 import { adminNavItems } from "@/components/admin/AdminSidebar";
 
@@ -58,6 +58,14 @@ export default function AdminHeader({
         </Link>
 
         <div className="flex items-center gap-3">
+          <button
+            type="button"
+            aria-label="Notifications — none yet"
+            title="No notifications yet"
+            className="relative rounded-full p-2 text-stone-400 transition-colors hover:bg-white/5 hover:text-white"
+          >
+            <Bell size={17} />
+          </button>
           <div className="hidden text-right sm:block">
             <p className="max-w-[10rem] truncate text-sm font-medium text-stone-200">
               {adminName}
