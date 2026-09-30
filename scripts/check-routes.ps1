@@ -1,8 +1,20 @@
 $ErrorActionPreference = 'Stop'
 $base = 'http://localhost:3000'
 
+# Credentials: process env wins, then .env.local (what the dev server reads),
+# then dev defaults.
+$envFilePath = Join-Path (Split-Path -Parent $PSScriptRoot) '.env.local'
+$envFile = @{}
+if (Test-Path $envFilePath) {
+  foreach ($line in Get-Content $envFilePath) {
+    if ($line -match '^\s*([A-Za-z0-9_]+)\s*=\s*(.*)$') { $envFile[$matches[1]] = $matches[2].Trim() }
+  }
+}
+$adminEmail = if ($env:ADMIN_EMAIL) { $env:ADMIN_EMAIL } elseif ($envFile['ADMIN_EMAIL']) { $envFile['ADMIN_EMAIL'] } else { 'owner@example.com' }
+$adminPassword = if ($env:ADMIN_PASSWORD) { $env:ADMIN_PASSWORD } elseif ($envFile['ADMIN_PASSWORD']) { $envFile['ADMIN_PASSWORD'] } else { 'dev-password-123' }
+
 # login as admin first so /admin/* pages are checked authenticated
-$loginBody = @{ email = 'owner@example.com'; password = 'dev-password-123' } | ConvertTo-Json -Compress
+$loginBody = @{ email = $adminEmail; password = $adminPassword } | ConvertTo-Json -Compress
 $null = Invoke-RestMethod -Uri "$base/api/admin/auth/login" -Method Post -ContentType 'application/json' -Body $loginBody -SessionVariable sess -TimeoutSec 30
 
 # find a real product slug from the storefront API

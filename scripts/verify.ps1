@@ -3,8 +3,18 @@ $ErrorActionPreference = 'Stop'
 # sides are verified against the same origin. Override with VERIFY_BASE_URL
 # if you run `npm run dev` on a different port.
 $base = if ($env:VERIFY_BASE_URL) { $env:VERIFY_BASE_URL } else { 'http://localhost:3000' }
-$adminEmail = if ($env:ADMIN_EMAIL) { $env:ADMIN_EMAIL } else { 'owner@example.com' }
-$adminPassword = if ($env:ADMIN_PASSWORD) { $env:ADMIN_PASSWORD } else { 'dev-password-123' }
+
+# Credentials: process env wins, then .env.local (what the dev server reads),
+# then dev defaults.
+$envFilePath = Join-Path (Split-Path -Parent $PSScriptRoot) '.env.local'
+$envFile = @{}
+if (Test-Path $envFilePath) {
+  foreach ($line in Get-Content $envFilePath) {
+    if ($line -match '^\s*([A-Za-z0-9_]+)\s*=\s*(.*)$') { $envFile[$matches[1]] = $matches[2].Trim() }
+  }
+}
+$adminEmail = if ($env:ADMIN_EMAIL) { $env:ADMIN_EMAIL } elseif ($envFile['ADMIN_EMAIL']) { $envFile['ADMIN_EMAIL'] } else { 'owner@example.com' }
+$adminPassword = if ($env:ADMIN_PASSWORD) { $env:ADMIN_PASSWORD } elseif ($envFile['ADMIN_PASSWORD']) { $envFile['ADMIN_PASSWORD'] } else { 'dev-password-123' }
 function Step($name) { Write-Host "-> $name" -ForegroundColor DarkGray }
 
 # --- public: smoke suite -------------------------------------------------
